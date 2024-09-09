@@ -84,9 +84,14 @@ type TCardInfo = Pick<ICard, 'image' | 'category' | 'title' | 'description' | 'p
 type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
 ```
 
-Данные заказа, используемые в попапах ввода данных покупателя
+Данные заказа, используемые в попапе выбора способа оплаты и ввода адреса покупателя
 ```ts
-type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address' | 'email' | 'phone'>
+type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
+```
+
+Данные заказа, используемые в попапе ввода email и номера телефона покупаптеля
+```ts
+type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 ```
 
 ## Архитектура приложения
@@ -150,8 +155,83 @@ type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address' | 'email' | 'phone'>
 - phone: string - номер телефона покупателя
 
 Так же класс предоставляет метод для взаимодействия с этими данными:
-- setOrderInfo(orderData: TOrderInfo): void - сохраняет данные покупателя в классе
+- setOrderInfo(orderData: TOrderInfo): void - сохраняет данные о способе оплаты и адресе поекпателя в классе заказа
+- setContactsInfo(contactsData: TContactsInfo): void - сохраняет email и номер телефона покупателя в классе заказа
+
 
 ### Классы представления
 
 Все классы представления отвечают за отображение внутри контейнера (DOM-элемент) передаваемых в них данных.
+
+#### Класс Modal
+Реализует модальное окно. Так же предоставляет методы `open` и `close` для управления отображением модального окна. Устанавливает слушатель для закрытия модального окна по клику вне модального окна и на кнопку-крестик.
+- constructor(selector: string, events: IEvent) Конструктор принимает селектор, по которому в разметке страницы будет идентифицировано модальное окно и экземпляр класса `EventEmitter` для возможности инициации событий.
+
+Поля класса:
+- modal: HTMLElement - элемент модального окна
+- events: IEvent - брокер событий
+
+#### Класс ModalWithCard
+Расширяет класс Modal. Предназначен для реализации модального окна карточки товара.\
+
+Поля класса:
+- category: HTMLElement - элемент разметки категории товара
+- title: HTMLElement - элемент разметки заголовака карточки товара
+- image: HTMLImageElement - элемент разметки с изображением товара
+- description: HTMLElement - элемент разметки с описанием товара
+- price: HTMLElement - элемент цены товара
+- addButton: HTMLButtonElement - Кнопка добавления товара в корзину
+- cardID: string - значение атрибута Id карточки товара
+- handleAdd: Function - функция добавления товара в корзину
+
+Методы:
+- open(handleAdd: Function): void - расширение родительского метода, принимает обработчик, который передается при инциации события добавления товара в корзину.
+- get form: HTMLElement - геттер для получения элемента формы.
+
+#### Класс ModalWhithBasket
+Расширяет класс Modal. Предназначен для релизации модального окна с корзиной товаров.\
+
+Поля класса:
+- list: HTMLElement - элемент списка товаров
+- totalPrice: HTMLElement - элемент общей стоимости товаров
+- purchaseButton: HTMLButtonElement - элемент кнопки формления покупки
+
+Методы:
+- setCards(cardItems: ICard[]) - добавляет товары с список
+- setTotal(totalPrice: number) - считает общую стоимость товаров
+
+#### Класс ModalWhithOrderInfo
+Расширяет класс Modal. Предназначен для релизации модального окна с формой выбора формы оплаты и поля ввода адреса. При сабмите иницирует событие передавая в него объект с данными.
+
+Поля класса:
+- btnPayOnline: HTMLButtonElement - кнопка онлайн оплаты
+- btmPayReceipt: HTMLButtonElement - кнопка оплаты при получении
+- inputAddress: HTMLInputElement - форма для заполнения адреса доставки
+- orderButton: HTMLButtonElement - кнопка подтверждения и продолжения оформления
+
+Методы:
+- setActive(isActive: boolean): void - изменяет активность кнопок выбора оплаты
+- getInputValue(): string - возвращает введенный адрес
+- close(): void - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
+
+#### Класс ModalWhithContactsInfo
+Расширяет класс Modal. Предназначен для релизации модального окна с формой ввода email и номера телефона покупателя. При сабмите иницирует событие передавая в него объект с данными.
+Поля класса:
+- inputEmail: HTMLInputElement - форма для заполнения email
+- inputPhone: HTMLInputElement - форма для заполнения номера телефона
+- submitButton: HTMLButtonElement - кнопка оплаты
+
+Методы:
+- inputs: NodeListOf<HTMLInputElement> - коллекция всех полей ввода формы
+- close(): void - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
+
+#### Класс ModalComplete
+Расширяет класс Modal. Предназначен для реализации окна подтверждающего успешное оформление заказа и отображения итоговой стоимости.
+
+Поля класса:
+- totalPrice: number - элемент общей стоимости товаров
+- confirmButton: HTMLButtonElement - элемент кнопки подтверждения
+
+Методы: 
+- setTotal(totalPrice: number) - считает общую стоимость товаров
+

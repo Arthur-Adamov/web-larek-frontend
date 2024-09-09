@@ -21,8 +21,8 @@ type TCardPublicInfo = Pick<ICard, 'category' | 'title' | 'image' | 'price'>
 
 type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
 
-type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address' | 'email' | 'phone'>
-
+type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
+type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 
 
 interface ICardsData {
@@ -44,4 +44,5 @@ interface IOrderData {
     email: string;
     phone: string;
     setOrderInfo(orderData: TOrderInfo): void;
+    setContactsInfo(contactsData: TContactsInfo): void
 }
