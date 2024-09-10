@@ -47,7 +47,7 @@ yarn build
 
 ```ts
 interface ICard {
-    cardID: string;
+    id: string;
     category?: string;
     title: string;
     image?: string;
@@ -131,8 +131,9 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
-- addCard(card: ICard): void - добавляет карточку в начало массива
-- getCard(cardID: string): ICard - возвращает карточку по ее id
+- getCard(id: string): ICard - возвращает карточку по ее id
+- saveCards(cards: ICard[]): void - сохраняет массив карточек товаров
+- getCards(): ICard[] - получает массив карточек товаров для вывода на главной странице
 
 #### Класс BasketData
 
@@ -143,7 +144,11 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 - addCard(card: ICard): void - добавляет товар в начало списка
-- deleteCard(cardID: string): void - удаляет товар из списка
+- deleteCard(id: string): void - удаляет товар из списка
+- isCardInBasket(id: string): boolean - проверяет есть ли товар уже в корзине
+- clearBasket(): void - очищает корзину
+- getCards(): ICard[] - получает массив товаров
+- getCardsId(): string[] - получает массив id товаров для составления заказа для сервера
 
 #### Класс OrderData
 
@@ -155,8 +160,10 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - phone: string - номер телефона покупателя
 
 Так же класс предоставляет метод для взаимодействия с этими данными:
-- setOrderInfo(orderData: TOrderInfo): void - сохраняет данные о способе оплаты и адресе поекпателя в классе заказа
+- setOrderInfo(orderData: TOrderInfo): void - сохраняет данные о способе оплаты и адресе покупателя в классе заказа
 - setContactsInfo(contactsData: TContactsInfo): void - сохраняет email и номер телефона покупателя в классе заказа
+- checkValidation(data: Record<keyof TOrderInfo, string>): boolean - валидирует поля ввода
+- getUserData(orderData: TOrderInfo, contactsData: TContactsInfo): IOrder - получает объект с данными пользователя для создания заказа для сервера
 
 
 ### Классы представления
@@ -172,7 +179,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - events: IEvent - брокер событий
 
 #### Класс ModalWithCard
-Расширяет класс Modal. Предназначен для реализации модального окна карточки товара.\
+Предназначен для реализации модального окна карточки товара.\
 
 Поля класса:
 - category: HTMLElement - элемент разметки категории товара
@@ -181,7 +188,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - description: HTMLElement - элемент разметки с описанием товара
 - price: HTMLElement - элемент цены товара
 - addButton: HTMLButtonElement - Кнопка добавления товара в корзину
-- cardID: string - значение атрибута Id карточки товара
+- id: string - значение атрибута Id карточки товара
 - handleAdd: Function - функция добавления товара в корзину
 
 Методы:
@@ -189,7 +196,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - get form: HTMLElement - геттер для получения элемента формы.
 
 #### Класс ModalWhithBasket
-Расширяет класс Modal. Предназначен для релизации модального окна с корзиной товаров.\
+Предназначен для релизации модального окна с корзиной товаров.\
 
 Поля класса:
 - list: HTMLElement - элемент списка товаров
@@ -201,7 +208,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - setTotal(totalPrice: number) - считает общую стоимость товаров
 
 #### Класс ModalWhithOrderInfo
-Расширяет класс Modal. Предназначен для релизации модального окна с формой выбора формы оплаты и поля ввода адреса. При сабмите иницирует событие передавая в него объект с данными.
+Предназначен для релизации модального окна с формой выбора формы оплаты и поля ввода адреса. При сабмите иницирует событие передавая в него объект с данными.
 
 Поля класса:
 - btnPayOnline: HTMLButtonElement - кнопка онлайн оплаты
@@ -215,7 +222,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - close(): void - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
 
 #### Класс ModalWhithContactsInfo
-Расширяет класс Modal. Предназначен для релизации модального окна с формой ввода email и номера телефона покупателя. При сабмите иницирует событие передавая в него объект с данными.
+Предназначен для релизации модального окна с формой ввода email и номера телефона покупателя. При сабмите иницирует событие передавая в него объект с данными.
 Поля класса:
 - inputEmail: HTMLInputElement - форма для заполнения email
 - inputPhone: HTMLInputElement - форма для заполнения номера телефона
@@ -226,7 +233,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - close(): void - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
 
 #### Класс ModalComplete
-Расширяет класс Modal. Предназначен для реализации окна подтверждающего успешное оформление заказа и отображения итоговой стоимости.
+Предназначен для реализации окна подтверждающего успешное оформление заказа и отображения итоговой стоимости.
 
 Поля класса:
 - totalPrice: number - элемент общей стоимости товаров

@@ -1,5 +1,5 @@
 interface ICard {
-    cardID: string;
+    id: string;
     category?: string;
     title: string;
     image?: string;
@@ -28,14 +28,21 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 interface ICardsData {
     cards:ICard[];
     preview: string | null;
-    addCard(card: ICard): void;
-    getCard(cardID: string): ICard;
+    getCard(id: string): ICard;
+    saveCards(cards: ICard[]): void
+    getCards(): ICard[]
+    saveCards(cards: ICard[]): void
+    getCards(): ICard[]
 }
 
 interface IBasketData {
     cards:TBasket[];
     addCard(card: ICard): void;
-    deleteCard(cardID: string): void;
+    deleteCard(id: string): void;
+    isCardInBasket(id: string): boolean
+    clearBasket(): void
+    getCards(): ICard[]
+    getCardsId(): string[]
 }
 
 interface IOrderData {
@@ -45,4 +52,6 @@ interface IOrderData {
     phone: string;
     setOrderInfo(orderData: TOrderInfo): void;
     setContactsInfo(contactsData: TContactsInfo): void
+    checkValidation(data: Record<keyof TOrderInfo, string>): boolean
+    getUserData(orderData: TOrderInfo, contactsData: TContactsInfo): IOrder
 }
