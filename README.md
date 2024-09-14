@@ -86,12 +86,12 @@ type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
 
 Данные заказа, используемые в попапе выбора способа оплаты и ввода адреса покупателя
 ```ts
-type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
+type TOrderForm = Pick<IOrder, 'paymentMethod' | 'address'>
 ```
 
 Данные заказа, используемые в попапе ввода email и номера телефона покупаптеля
 ```ts
-type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
+type TContactsForm = Pick<IOrder, 'email' | 'phone'>
 ```
 
 ## Архитектура приложения
@@ -122,8 +122,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 #### Класс Component
 
 Класс для создания компонентов пользовательского интерфейса. Предоставляет инструментарий для работы с DOM в дочерних компонентах. Наследуется всеми классами представления.
-- `constructor(contsuner: HTMLElement)` - конструктор принимает DOM-элемент в который помещается нужный компонент.
-
+- `constructor(container: HTMLElement)` - конструктор принимает DOM-элемент в который помещается нужный компонент.
 
 Методы:
 - `toggleClass(element: HTMLElement, className: string)` - переключает класс переданного элемента
@@ -175,11 +174,10 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - `phone: string` - номер телефона покупателя
 
 Так же класс предоставляет метод для взаимодействия с этими данными:
-- `setOrderInfo(orderData: TOrderInfo): void` - сохраняет данные о способе оплаты и адресе покупателя в классе заказа
-- `setContactsInfo(contactsData: TContactsInfo): void` - сохраняет email и номер телефона покупателя в классе заказа
-- `checkValidation(data: Record<keyof TOrderInfo, string>): boolean` - валидирует поля ввода
-- `getUserData(orderData: TOrderInfo, contactsData: TContactsInfo): IOrder` - получает объект с данными пользователя для создания заказа для сервера
-
+- `setOrderForm(orderData: TOrderForm): void` - сохраняет данные о способе оплаты и адресе покупателя в классе заказа
+- `setContactsForm(contactsData: TContactsForm): void` - сохраняет email и номер телефона покупателя в классе заказа
+- `checkValidation(data: Record<keyof TOrderForm, string>): boolean` - валидирует поля ввода
+- `getUserData(orderData: TOrderForm, contactsData: TContactsForm): IOrder` - получает объект с данными пользователя для создания заказа для сервера
 
 ### Классы представления
 
@@ -188,7 +186,7 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 #### Класс Page
 
 Реализует главную странцу. По клику на кнопку корзины, генерирует событие `basket:open`, по клику на карточку товара - `card:select`.
-- `constructor(contsuner: HTMLElement, events: IEvent)` - конструктор принимает DOM-элемент главной страницы и брокер событий.
+- `constructor(container: HTMLElement, events: IEvent)` - конструктор принимает DOM-элемент главной страницы и брокер событий.
 
 Поля класса:
 - `catalog: HTMLElement` - элемнет каталога карточек
@@ -208,12 +206,25 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - `closeButton: HTMLButtonElement` - кнопка закрытия модального окна
 
 Методы:
-- `open()` - открывает модальное окно
-- `close()` - закрывает модальное окно
+- `open()` - открывает модальное окно и генерирует событие `modal:open`
+- `close()` - закрывает модальное окно и генерирует событие `modal:close`
 - `render(): HTMLElement` - отрисовывает модальное окно с переданным содержимым
 
+#### Класс Form
+Предназначен для релизации общего элемента формы.\
+- `constructor(container: HTMLElement, event: IEvents)` - конструктор принимает темплейт формы и брокер событий.
+
+Поля класса:
+- `formError: string` - элемент с ошибками валидации
+- `submitButton: HTMLButtonElement` - кнопка подтверждения и продолжения оформления
+
+Методы:
+- `checkValidation(error: string)` - проверяет валидацию форм
+- `clearForm(): void` - очищает форму
+
 #### Класс Card
-Предназначен для реализации модального окна карточки товара. По клику на кнопку добавления карточки в корзину, генерирует событие `card:add`.\
+Предназначен для реализации карточки товара на главной странице, в модальном окне и корзине. По клику на кнопку добавления карточки в корзину, генерирует событие `card:add`.\
+- `constructor(container: HTMLElement, actions?: ICardActions)` - конструктор принимает темплейт карточки и опционально объект с колбеком.
 
 Поля класса:
 - `category: HTMLElement` - элемент разметки категории товара
@@ -221,13 +232,17 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - `image: HTMLImageElement` - элемент разметки с изображением товара
 - `description: HTMLElement` - элемент разметки с описанием товара
 - `price: HTMLElement` - элемент цены товара
-- `addButton: HTMLButtonElement` - Кнопка добавления товара в корзину
+- `addButton: HTMLButtonElement` - кнопка добавления товара в корзину
 - `id: string` - значение атрибута Id карточки товара
 - `handleAdd: Function` - функция добавления товара в корзину
 
 Методы:
-- `open(handleAdd: Function): void` - расширение родительского метода, принимает обработчик, который передается при инциации события добавления товара в корзину.
-- `get form: HTMLElement` - геттер для получения элемента формы.
+- `id(value: sting)` - задает id крточки
+- `category(value: string)` - задает значение категории карточки
+- `title(value: string)` - задает значение заголовка карточки
+- `image(value: string)` - задает ссылку для изображения карточки
+- `description(value: string)` - задает занчение описания карточки
+- `price(value: number)` - задает значение цены товара
 
 #### Класс Basket
 Предназначен для релизации модального окна с корзиной товаров. По клику на кнопку удаления карточки, генерирует событие `card:delete`, а по кнопке оформления покупки - `order: open`.\
@@ -241,30 +256,26 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 - `setCards(cardItems: ICard[])` - добавляет товары с список
 - `setTotal(totalPrice: number)` - считает общую стоимость товаров
 
-#### Класс OrderInfo
-Предназначен для релизации модального окна с формой выбора формы оплаты и поля ввода адреса. При сабмите иницирует событие передавая в него объект с данными. По клику кнопки подтверждения, генерирует событие `contacts: open`.
+#### Класс OrderForm
+Предназначен для релизации модального окна с формой выбора формы оплаты и поля ввода адреса. При сабмите иницирует событие передавая в него объект с данными. По клику кнопки подтверждения, генерирует событие `contacts: open` и `edit-order-form: submit`, событие `edit-order-form: input` - при инпуте.
 
 Поля класса:
 - `btnPayOnline: HTMLButtonElement` - кнопка онлайн оплаты
 - `btmPayReceipt: HTMLButtonElement` - кнопка оплаты при получении
 - `inputAddress: HTMLInputElement` - форма для заполнения адреса доставки
-- `orderButton: HTMLButtonElement` - кнопка подтверждения и продолжения оформления
 
 Методы:
 - `setActive(isActive: boolean): void` - изменяет активность кнопок выбора оплаты
 - `getInputValue(): string` - возвращает введенный адрес
-- `close(): void` - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
 
-#### Класс ContactsInfo
-Предназначен для релизации модального окна с формой ввода email и номера телефона покупателя. При сабмите иницирует событие передавая в него объект с данными. По клику кнопки оплаты, генерирует событие `complete: open`.
+#### Класс ContactsForm
+Предназначен для релизации модального окна с формой ввода email и номера телефона покупателя. При сабмите иницирует событие передавая в него объект с данными. По клику кнопки оплаты, генерирует событие `complete: open` и `edit-contacts-form: submit`, а при инпуте `edit-contacts-form: input`.
 Поля класса:
 - `inputEmail: HTMLInputElement` - форма для заполнения email
 - `inputPhone: HTMLInputElement` - форма для заполнения номера телефона
-- `submitButton: HTMLButtonElement`  - кнопка оплаты
 
 Методы:
 - `inputs: NodeListOf<HTMLInputElement>` - коллекция всех полей ввода формы
-- `close(): void` - расширяет родительский метод, дополнительно при закрытии очищая поля формы.
 
 #### Класс Complete
 Предназначен для реализации окна подтверждающего успешное оформление заказа и отображения итоговой стоимости.
@@ -298,15 +309,17 @@ type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 
 *События, возникающие при взаимодействии пользователя с интерфесом(генерируются классами, отвечающими за представление)*
 
+- `modal:open` - открытие модального окна
+- `modal:close` - закрытие модального окна
 - `basket:open` - открытие модального окна с корзиной
 - `card:select` - выбор карточки для отображения в модальном окне
-- `card:add` - выбор карточки для добавления в корзину в корзину
+- `card:add` - выбор карточки для добавления в корзину
 - `card:delete` - выбор карточки для удаления из корзины
 - `order: open` - открытие модаольного окна выбора формы оплаты и поля ввода адреса
 - `contacts: open` - открытие модаольного окна ввода email и номера телефона покупателя
 - `complete: open` - открытие модаольного окна подтверждающего успешное оформление заказа
-- `edit-order-info: input` - изменение данных в форме выбора формы оплаты и поля ввода адреса
-- `edit-contacts-info: input` - изменение данных в форме ввода email и номера телефона покупателя
-- `edit-order-info: submit` - сохранение данных в форме выбора формы оплаты и поля ввода адреса
-- `edit-contacts-info: submit` - сохранение данных в форме ввода email и номера телефона покупателя
+- `edit-order-form: input` - изменение данных в форме выбора формы оплаты и поля ввода адреса
+- `edit-contacts-form: input` - изменение данных в форме ввода email и номера телефона покупателя
+- `edit-order-form: submit` - сохранение данных в форме выбора формы оплаты и поля ввода адреса
+- `edit-contacts-form: submit` - сохранение данных в форме ввода email и номера телефона покупателя
 - `complete: submit` - подтверждение успешно оформленного заказа
