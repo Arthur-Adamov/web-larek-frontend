@@ -1,57 +1,60 @@
-interface ICard {
-    id: string;
-    category?: string;
-    title: string;
-    image?: string;
-    description?: string;
-    price: number;
+export interface ICard {
+  id: string;
+  category?: string;
+  title: string;
+  image?: string;
+  description?: string;
+  price: number;
 }
 
-interface IOrder {
-    cardItems: ICard[];
-    totalPrice: number;
-    paymentMethod: string;
-    address: string;
-    email: string;
-    phone: string;
+export interface IOrder {
+  cardItems: ICard[];
+  totalPrice: number;
+  paymentMethod: string;
+  address: string;
+  email: string;
+  phone: string;
 }
 
-type TCardInfo = Pick<ICard, 'image' | 'category' | 'title' | 'description' | 'price'>
-type TCardPublicInfo = Pick<ICard, 'category' | 'title' | 'image' | 'price'>
+export type TCardInfo = Pick<ICard, 'image' | 'category' | 'title' | 'description' | 'price'>
+export type TCardPublicInfo = Pick<ICard, 'category' | 'title' | 'image' | 'price'>
 
-type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
+export type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
 
-type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
-type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
+export type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
+export type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
 
+export type FormErrors = Partial<Record<keyof IOrder, string>>
 
-interface ICardsData {
-    cards:ICard[];
-    preview: string | null;
-    getCard(id: string): ICard;
-    saveCards(cards: ICard[]): void
-    getCards(): ICard[]
-    saveCards(cards: ICard[]): void
-    getCards(): ICard[]
+export interface ICardsData {
+  cards:ICard[];
+  preview: string | null;
+  setCards(cards: ICard[]): void
+  getCards(): ICard[]
+  getCard(cardId: string): ICard;
+  setPreview(cardId: string | null): void
+  getPreview(): void
 }
 
-interface IBasketData {
-    cards:TBasket[];
-    addCard(card: ICard): void;
-    deleteCard(id: string): void;
-    isCardInBasket(id: string): boolean
-    clearBasket(): void
-    getCards(): ICard[]
-    getCardsId(): string[]
+export interface IBasketData {
+  cards: ICard[];
+  addCard(card: ICard): void;
+  deleteCard(cardId: string): void;
+  isCardInBasket(cardId: string): boolean
+  clearBasket(): void
+  getCards(): ICard[]
+  // getCardsId(): string[]
 }
 
-interface IOrderData {
-    paymentMethod: string;
-    address: string;
-    email: string;
-    phone: string;
-    setOrderInfo(orderData: TOrderInfo): void;
-    setContactsInfo(contactsData: TContactsInfo): void
-    checkValidation(data: Record<keyof TOrderInfo, string>): boolean
-    getUserData(orderData: TOrderInfo, contactsData: TContactsInfo): IOrder
+export interface IOrderData {
+  paymentMethod: string;
+  address: string;
+  email: string;
+  phone: string;
+  setOrderInfo(orderData: TOrderInfo): void;
+  setContactsInfo(contactsData: TContactsInfo): void
+  getOrderData(): void
+
+  checkValidateAddress(): boolean
+  checkValidateContacts(): boolean
 }
