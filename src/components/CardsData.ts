@@ -2,7 +2,7 @@ import { ICard, ICardsData } from "../types"
 import { IEvents } from "./base/events"
 
 export class CardsData implements ICardsData {
-  cards:ICard[]
+  cards:ICard[] = []
   preview: string | null
   protected events: IEvents
 

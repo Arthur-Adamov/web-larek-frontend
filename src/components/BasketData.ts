@@ -2,7 +2,7 @@ import { IBasketData, ICard, TBasket } from "../types"
 import { IEvents } from "./base/events"
 
 export class BasketData implements IBasketData {
-  cards: ICard[]
+  cards: ICard[] = []
   protected events: IEvents
 
 
@@ -11,7 +11,7 @@ export class BasketData implements IBasketData {
   }
 
   addCard(card: ICard) {
-    this.cards.unshift(card)
+    this.cards.push(card)
     this.events.emit('basket:changed')
   }
 

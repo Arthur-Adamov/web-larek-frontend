@@ -1,7 +1,7 @@
 import { FormErrors, IOrder, IOrderData, TContactsInfo, TOrderInfo } from "../types"
 import { IEvents } from "./base/events"
 
-export class orderData implements IOrderData {
+export class OrderData implements IOrderData {
   paymentMethod: string
   address: string
   email: string

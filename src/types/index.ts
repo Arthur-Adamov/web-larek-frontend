@@ -1,3 +1,5 @@
+// import { ApiPostMethods } from "../components/base/api";
+
 export interface ICard {
   id: string;
   category?: string;
@@ -58,3 +60,12 @@ export interface IOrderData {
   checkValidateAddress(): boolean
   checkValidateContacts(): boolean
 }
+
+// export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
+// export interface IApi {
+//   baseUrl: string;
+//   get<T>(uri: string): Promise<T>;
+//   post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>
+// }
+
