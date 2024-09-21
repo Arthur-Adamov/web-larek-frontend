@@ -1,13 +1,16 @@
 import { WebLarekAPI } from './components/AppApi';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
+import { Basket } from './components/common/Basket';
 import { BasketData } from './components/BasketData';
+import { Card } from './components/Card';
 import { CardsData } from './components/CardsData';
+import { Modal } from './components/common/Modal';
 import { OrderData } from './components/OrderData';
 import './scss/styles.scss';
 import { ICard } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
-import { cloneTemplate } from './utils/utils';
+import { cloneTemplate, createElement, ensureElement } from './utils/utils';
 
 
 const events = new EventEmitter()
@@ -126,6 +129,20 @@ api.getCardList()
     console.error(err)
   })
 
+events.onAll((event) => {
+  console.log(event.eventName, event.data)
+})
+
+
+
+// events.on('basket:open', () => {
+// 	modal.render({
+// 		basket.render(),
+// 	});
+// });
+
+
+
 
 // orderData.setOrderInfo({paymentMethod: 'online', address: 'Moscow'})
 // orderData.setContactsInfo({email: 'online@yandex.ru', phone: '99999999'})
@@ -142,8 +159,6 @@ api.getCardList()
 // console.log(basketData.isCardInBasket('854cef69-976d-4c2a-a18c-2aa45046c390'))
 
 // console.log(basketData.getCards())
-
-
 
 cardsData.setPreview('854cef69-976d-4c2a-a18c-2aa45046c390')
 

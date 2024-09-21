@@ -18,13 +18,14 @@ export interface IOrder {
   phone: string;
 }
 
+
 export type TCardInfo = Pick<ICard, 'image' | 'category' | 'title' | 'description' | 'price'>
 export type TCardPublicInfo = Pick<ICard, 'category' | 'title' | 'image' | 'price'>
 
 export type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
 
-export type TOrderInfo = Pick<IOrder, 'paymentMethod' | 'address'>
-export type TContactsInfo = Pick<IOrder, 'email' | 'phone'>
+export type TOrderForm = Pick<IOrder, 'paymentMethod' | 'address'>
+export type TContactsForm = Pick<IOrder, 'email' | 'phone'>
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>
 
@@ -53,8 +54,8 @@ export interface IOrderData {
   address: string;
   email: string;
   phone: string;
-  setOrderInfo(orderData: TOrderInfo): void;
-  setContactsInfo(contactsData: TContactsInfo): void
+  setOrderInfo(orderData: TOrderForm): void;
+  setContactsInfo(contactsData: TContactsForm): void
   getOrderData(): void
 
   checkValidateAddress(): boolean

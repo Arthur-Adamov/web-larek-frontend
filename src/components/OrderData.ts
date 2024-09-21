@@ -1,4 +1,4 @@
-import { FormErrors, IOrder, IOrderData, TContactsInfo, TOrderInfo } from "../types"
+import { FormErrors, IOrder, IOrderData, TContactsForm, TOrderForm } from "../types"
 import { IEvents } from "./base/events"
 
 export class OrderData implements IOrderData {
@@ -13,12 +13,12 @@ export class OrderData implements IOrderData {
     this.events = events
   }
 
-  setOrderInfo(orderData: TOrderInfo){
+  setOrderInfo(orderData: TOrderForm){
     this.paymentMethod = orderData.paymentMethod
     this.address = orderData.address
   }
 
-  setContactsInfo(contactsData: TContactsInfo){
+  setContactsInfo(contactsData: TContactsForm){
     this.email = contactsData.email
     this.phone = contactsData.phone
   }
@@ -44,10 +44,10 @@ export class OrderData implements IOrderData {
   checkValidateContacts() {
     const errors: typeof this.formErrors = {}
     if (!this.email) {
-        errors.email = 'Необходимо указать email'
+      errors.email = 'Необходимо указать email'
     }
     if (!this.phone) {
-        errors.phone = 'Необходимо указать телефон'
+      errors.phone = 'Необходимо указать телефон'
     }
     this.formErrors = errors
     this.events.emit('formErrors:change', this.formErrors)
