@@ -62,11 +62,11 @@ export interface IOrderData {
   checkValidateContacts(): boolean
 }
 
-// export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
-// export interface IApi {
-//   baseUrl: string;
-//   get<T>(uri: string): Promise<T>;
-//   post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>
-// }
+export interface IApi {
+  baseUrl: string;
+  get<T>(uri: string): Promise<T>;
+  post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>
+}
 

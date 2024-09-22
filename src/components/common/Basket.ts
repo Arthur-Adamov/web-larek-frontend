@@ -22,7 +22,7 @@ export class Basket extends Component<IBasket> {
     this.events = events
     this.list = ensureElement<HTMLElement>('.basket__list', this.container)
     this._total = this.container.querySelector('.basket__price')
-    this.button = this.button.querySelector('.basket__button')
+    this.button = this.container.querySelector('.basket__button')
 
     if (this.button) {
       this.button.addEventListener('click', () => {

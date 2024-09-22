@@ -3,6 +3,10 @@ import { cloneTemplate, ensureElement } from "../utils/utils"
 import { Component } from "./base/Components"
 import { IEvents } from "./base/events"
 
+// interface ICardActions {
+//   onClick: (event: MouseEvent) => void;
+// }
+
 export class Card extends Component<ICard> {
   protected element: HTMLElement
   protected events: IEvents
@@ -18,18 +22,18 @@ export class Card extends Component<ICard> {
     super(container)
     this.events = events
 
-    // this.element = cloneTemplate()
 
     this.cardImage = container.querySelector('.card__image')
     this.cardCategory = container.querySelector('.card__category')
-    this.cardTitle = ensureElement<HTMLElement>('.card__title', container)
+    this.cardTitle = container.querySelector('.card__title')
     this.cardDescription = container.querySelector('.card__text')
     this.cardButton = container.querySelector('.card__button')
-    this.cardPrice = ensureElement<HTMLElement>('.card__price', container)
+    this.cardPrice = container.querySelector('.card__price')
 
-    this.cardButton.addEventListener('click', () => {
+    this.container.addEventListener('click', () => {
       this.events.emit('card:add', {card: this})
     })
+
   }
 
   set id(value: string) {

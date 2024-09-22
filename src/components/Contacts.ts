@@ -2,7 +2,7 @@ import { TContactsForm } from "../types"
 import { IEvents } from "./base/events"
 import { Form } from "./common/Form"
 
-export class Order extends Form<TContactsForm> {
+export class Contacts extends Form<TContactsForm> {
   constructor(container: HTMLFormElement, events: IEvents) {
     super(container, events)
   }

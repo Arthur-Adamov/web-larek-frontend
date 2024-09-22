@@ -11,115 +11,45 @@ import './scss/styles.scss';
 import { ICard } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
+import { Page } from './components/Page';
+import { Contacts } from './components/Contacts';
+import { Success } from './components/common/Success';
+import { Order } from './components/Order';
+import { CardsContainer } from './components/CardsContainer';
 
 
 const events = new EventEmitter()
+const api = new WebLarekAPI(CDN_URL, API_URL, settings)
+
+// Чтобы мониторить все события для отладки
+events.onAll((event) => {
+  console.log(event.eventName, event.data)
+})
+
+// // Все шаблоны
+const successTemplate = ensureElement<HTMLTemplateElement>('#success')
+const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog')
+const cardPrewiewTemplate = ensureElement<HTMLTemplateElement>('#card-preview')
+const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket')
+const basketTemplate = ensureElement<HTMLTemplateElement>('#basket')
+const orderTemplate = ensureElement<HTMLTemplateElement>('#order')
+const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts')
+
+const modalContainer = ensureElement<HTMLElement>('#modal-container')
+
+const modal =  new Modal(modalContainer, events)
+const page = new Page(document.body, events)
+const basket = new Basket(cloneTemplate(basketTemplate), events)
+const order = new Order(cloneTemplate(orderTemplate), events)
+const contacts = new Contacts(cloneTemplate(contactsTemplate), events)
+const success = new Success(cloneTemplate(successTemplate), {onClick: () => modal.close})
+
 
 const cardsData = new CardsData(events)
 const basketData = new BasketData(events)
 const orderData = new OrderData(events)
 
-const api = new WebLarekAPI(CDN_URL, API_URL, settings)
-
-
-
-// const testCard = {
-//   "id": "854cef69-976d-4c2a-a18c-2aa45046c390",
-//   "description": "Если планируете решать задачи в тренажёре, берите два.",
-//   "image": "/5_Dots.svg",
-//   "title": "+1 час в сутках",
-//   "category": "софт-скил",
-//   "price": 750
-// }
-
-// const testCards = [
-//         {
-//             "id": "854cef69-976d-4c2a-a18c-2aa45046c390",
-//             "description": "Если планируете решать задачи в тренажёре, берите два.",
-//             "image": "/5_Dots.svg",
-//             "title": "+1 час в сутках",
-//             "category": "софт-скил",
-//             "price": 750
-//         },
-//         {
-//             "id": "c101ab44-ed99-4a54-990d-47aa2bb4e7d9",
-//             "description": "Лизните этот леденец, чтобы мгновенно запоминать и узнавать любой цветовой код CSS.",
-//             "image": "/Shell.svg",
-//             "title": "HEX-леденец",
-//             "category": "другое",
-//             "price": 1450
-//         },
-//         {
-//             "id": "b06cde61-912f-4663-9751-09956c0eed67",
-//             "description": "Будет стоять над душой и не давать прокрастинировать.",
-//             "image": "/Asterisk_2.svg",
-//             "title": "Мамка-таймер",
-//             "category": "софт-скил",
-//             "price": null
-//         },
-//         {
-//             "id": "412bcf81-7e75-4e70-bdb9-d3c73c9803b7",
-//             "description": "Откройте эти куки, чтобы узнать, какой фреймворк вы должны изучить дальше.",
-//             "image": "/Soft_Flower.svg",
-//             "title": "Фреймворк куки судьбы",
-//             "category": "дополнительное",
-//             "price": 2500
-//         },
-//         {
-//             "id": "1c521d84-c48d-48fa-8cfb-9d911fa515fd",
-//             "description": "Если орёт кот, нажмите кнопку.",
-//             "image": "/mute-cat.svg",
-//             "title": "Кнопка «Замьютить кота»",
-//             "category": "кнопка",
-//             "price": 2000
-//         },
-//         {
-//             "id": "f3867296-45c7-4603-bd34-29cea3a061d5",
-//             "description": "Чтобы научиться правильно называть модификаторы, без этого не обойтись.",
-//             "image": "Pill.svg",
-//             "title": "БЭМ-пилюлька",
-//             "category": "другое",
-//             "price": 1500
-//         },
-//         {
-//             "id": "54df7dcb-1213-4b3c-ab61-92ed5f845535",
-//             "description": "Измените локацию для поиска работы.",
-//             "image": "/Polygon.svg",
-//             "title": "Портативный телепорт",
-//             "category": "другое",
-//             "price": 100000
-//         },
-//         {
-//             "id": "6a834fb8-350a-440c-ab55-d0e9b959b6e3",
-//             "description": "Даст время для изучения React, ООП и бэкенда",
-//             "image": "/Butterfly.svg",
-//             "title": "Микровселенная в кармане",
-//             "category": "другое",
-//             "price": 750
-//         },
-//         {
-//             "id": "48e86fc0-ca99-4e13-b164-b98d65928b53",
-//             "description": "Очень полезный навык для фронтендера. Без шуток.",
-//             "image": "Leaf.svg",
-//             "title": "UI/UX-карандаш",
-//             "category": "хард-скил",
-//             "price": 10000
-//         },
-//         {
-//             "id": "90973ae5-285c-4b6f-a6d0-65d1d760b102",
-//             "description": "Сжимайте мячик, чтобы снизить стресс от тем по бэкенду.",
-//             "image": "/Mithosis.svg",
-//             "title": "Бэкенд-антистресс",
-//             "category": "другое",
-//             "price": 1000
-//         }
-// ]
-
-// cardsData.setCards(testCards)
-// console.log(cardsData.getCards())
-
-// console.log(cardsData.getCard('854cef69-976d-4c2a-a18c-2aa45046c390'))/
-
+// Получаем карточки с сервера
 api.getCardList()
   .then((cards) => {
     cardsData.cards = cards
@@ -129,39 +59,38 @@ api.getCardList()
     console.error(err)
   })
 
-events.onAll((event) => {
-  console.log(event.eventName, event.data)
+
+  const cardsContainer = new CardsContainer(document.querySelector('.gallery'))
+
+// Выводим карточки на главную страницу
+events.on('cards:changed', () => {
+  const cardsArray = cardsData.cards.map(card => {
+      const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events)
+      return cardInstant.render(card)
+  })
+  cardsContainer.render({catalog: cardsArray})
 })
 
 
 
-// events.on('basket:open', () => {
-// 	modal.render({
-// 		basket.render(),
-// 	});
-// });
+// const catalog = new CardsContainer(cardsContainer)
+// const testSection = document.querySelector('.gallery')
 
 
+const card = new Card(cardCatalogTemplate, events)
+card.render(cardsData.cards[4])
+console.log(card)
+
+// testSection.append(card.render(testCards[0]))
+
+// const card = new Card(cardCatalogTemplate, events)
+// const card1 = new Card(cardCatalogTemplate, events)
+// const cardArray = []
+// cardArray.push(card.render(testCards[0]))
+// cardArray.push(card1.render(testCards[1]))
+
+// cardsContainer.render({catalog:cardArray})
 
 
-// orderData.setOrderInfo({paymentMethod: 'online', address: 'Moscow'})
-// orderData.setContactsInfo({email: 'online@yandex.ru', phone: '99999999'})
-
-// console.log(orderData.getOrderData())
-
-// basketData.addCard(testCard)
-// basketData.addCard(testCard)
-// basketData.addCard(testCard)
-// basketData.addCard(testCard)
-// basketData.addCard(testCard)
-
-// basketData.deleteCard('854cef69-976d-4c2a-a18c-2aa45046c390')
-// console.log(basketData.isCardInBasket('854cef69-976d-4c2a-a18c-2aa45046c390'))
-
-// console.log(basketData.getCards())
-
-cardsData.setPreview('854cef69-976d-4c2a-a18c-2aa45046c390')
-
-// console.log(cardsData.getPreview())
 
 
