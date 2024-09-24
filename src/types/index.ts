@@ -30,12 +30,12 @@ export type TContactsForm = Pick<IOrder, 'email' | 'phone'>
 export type FormErrors = Partial<Record<keyof IOrder, string>>
 
 export interface ICardsData {
-  cards:ICard[];
-  preview: string | null;
-  setCards(cards: ICard[]): void
-  getCards(): ICard[]
+  cards: ICard[];
+  preview: ICard;
+  // setCards(cards: ICard[]): void
+  // getCards(): ICard[]
   getCard(cardId: string): ICard;
-  setPreview(cardId: string | null): void
+  setPreview(card: ICard): void
   getPreview(): void
 }
 

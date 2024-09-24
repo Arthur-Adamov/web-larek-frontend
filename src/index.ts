@@ -35,7 +35,9 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket')
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order')
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts')
 
+const cardsContainer = new CardsContainer(document.querySelector('.gallery'))
 const modalContainer = ensureElement<HTMLElement>('#modal-container')
+
 
 const modal =  new Modal(modalContainer, events)
 const page = new Page(document.body, events)
@@ -53,43 +55,56 @@ const orderData = new OrderData(events)
 api.getCardList()
   .then((cards) => {
     cardsData.cards = cards
-    console.log(cards)
+    // console.log(cards)
   })
   .catch(err => {
     console.error(err)
   })
 
 
-  const cardsContainer = new CardsContainer(document.querySelector('.gallery'))
 
 // Выводим карточки на главную страницу
 events.on('cards:changed', () => {
   const cardsArray = cardsData.cards.map(card => {
-      const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events)
-      return cardInstant.render(card)
+    const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events)
+    return cardInstant.render(card)
   })
   cardsContainer.render({catalog: cardsArray})
 })
 
+events.on('card:select', (card: ICard) => {
+  cardsData.setPreview(card)
 
+  // console.log(card)
+})
 
-// const catalog = new CardsContainer(cardsContainer)
-// const testSection = document.querySelector('.gallery')
+events.on('preview:changed', (card: ICard) => {
+  // const cardContent = cardsData.getCard(card.id)
 
+  const cardInModal = new Card(cloneTemplate(cardPrewiewTemplate), events)
 
-const card = new Card(cardCatalogTemplate, events)
-card.render(cardsData.cards[4])
-console.log(card)
+  modal.render({content:cardInModal.render(card)})
 
-// testSection.append(card.render(testCards[0]))
+  // modal.render({content:cardInModal.render({
+  //   category: card.category,
+  //   title: card.title,
+  //   image: card.image,
+  //   description: card.description,
+  //   price: card.price
+  // })})
+})
 
-// const card = new Card(cardCatalogTemplate, events)
-// const card1 = new Card(cardCatalogTemplate, events)
-// const cardArray = []
-// cardArray.push(card.render(testCards[0]))
-// cardArray.push(card1.render(testCards[1]))
+// events.on('preview:changed', (card: ICard) => {
+//   const cardContent = cardsData.getCard(card.id)
+//   const cardInModal = new Card(cloneTemplate(cardPrewiewTemplate), events)
 
-// cardsContainer.render({catalog:cardArray})
+//   modal.render({content:cardInModal.render(cardContent)})
+//   // console.log(cardInModal)
+// })
+
+// events.on('basket:open', () => {
+//   modal.open()
+// })
 
 
 

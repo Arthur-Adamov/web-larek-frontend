@@ -31,7 +31,7 @@ export class Card extends Component<ICard> {
     this.cardPrice = container.querySelector('.card__price')
 
     this.container.addEventListener('click', () => {
-      this.events.emit('card:add', {card: this})
+      this.events.emit('card:select', {card: this})
     })
 
   }

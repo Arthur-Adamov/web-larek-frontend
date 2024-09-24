@@ -2,37 +2,44 @@ import { ICard, ICardsData } from "../types"
 import { IEvents } from "./base/events"
 
 export class CardsData implements ICardsData {
-  cards:ICard[] = []
-  preview: string | null
+  protected _cards: ICard[]
+  preview: ICard | null
   protected events: IEvents
 
   constructor(events: IEvents) {
     this.events = events
   }
 
-  setCards(cards: ICard[]) {
-    this.cards = cards
+  set cards(cards: ICard[]) {
+    this._cards = cards
     this.events.emit('cards:changed')
   }
 
-  getCards(): ICard[] {
-    return this.cards
+  get cards(): ICard[] {
+    return this._cards
   }
+
 
   getCard(cardId: string): ICard {
-    return this.cards.find((card) => card.id === cardId)
+    return this._cards.find((card) => card.id === cardId)
   }
 
-  setPreview(cardId: string | null) {
-    if (!cardId) {
-      this.preview = null;
-      return;
-    }
-    const selectedCard = this.getCard(cardId);
-    if (selectedCard) {
-      this.preview = cardId;
-      this.events.emit('card:selected')
-    }
+  // setPreview(cardId: string | null) {
+  //   if (!cardId) {
+  //     this.preview = null;
+  //     return;
+  //   }
+  //   const selectedCard = this.getCard(cardId);
+  //   if (selectedCard) {
+  //     this.preview = cardId;
+  //     this.events.emit('card:selected')
+  //   }
+  // }
+
+
+  setPreview(card: ICard) {
+    this.preview = card
+    this.events.emit('preview:changed', card)
   }
 
   getPreview() {
