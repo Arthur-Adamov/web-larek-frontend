@@ -39,7 +39,7 @@ export class CardsData implements ICardsData {
 
   setPreview(card: ICard) {
     this.preview = card
-    this.events.emit('preview:changed', card)
+    this.events.emit('preview:changed', this.preview)
   }
 
   getPreview() {

@@ -3,9 +3,9 @@ import { cloneTemplate, ensureElement } from "../utils/utils"
 import { Component } from "./base/Components"
 import { IEvents } from "./base/events"
 
-// interface ICardActions {
-//   onClick: (event: MouseEvent) => void;
-// }
+interface ICardActions {
+  onClick: (event: MouseEvent) => void;
+}
 
 export class Card extends Component<ICard> {
   protected element: HTMLElement
@@ -17,10 +17,11 @@ export class Card extends Component<ICard> {
   protected cardDescription?: HTMLElement
   protected cardButton: HTMLButtonElement
   protected cardPrice: HTMLElement
+  protected cardIndex: HTMLElement
 
-  constructor(container: HTMLElement, events: IEvents) {
+  constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
     super(container)
-    this.events = events
+    // this.events = events
 
 
     this.cardImage = container.querySelector('.card__image')
@@ -29,12 +30,25 @@ export class Card extends Component<ICard> {
     this.cardDescription = container.querySelector('.card__text')
     this.cardButton = container.querySelector('.card__button')
     this.cardPrice = container.querySelector('.card__price')
+    this.cardIndex = container.querySelector('.basket__item-index')
 
-    this.container.addEventListener('click', () => {
-      this.events.emit('card:select', {card: this})
-    })
+    // this.container.addEventListener('click', () => {
+    //   this.events.emit('card:select', {card: this})
+    // })
 
+    if (actions?.onClick) {
+      if (this.cardButton) {
+        this.cardButton.addEventListener('click', actions.onClick);
+      } else {
+        container.addEventListener('click', actions.onClick);
+      }
+    }
   }
+
+  set index(value: number) {
+    this.setText(this.cardIndex, value)
+  }
+
 
   set id(value: string) {
     this.container.dataset.id = value;

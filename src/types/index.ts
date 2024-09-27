@@ -7,6 +7,7 @@ export interface ICard {
   image?: string;
   description?: string;
   price: number;
+  index: number
 }
 
 export interface IOrder {
@@ -46,6 +47,7 @@ export interface IBasketData {
   isCardInBasket(cardId: string): boolean
   clearBasket(): void
   getCards(): ICard[]
+  // setTotal(value: number)
   // getCardsId(): string[]
 }
 

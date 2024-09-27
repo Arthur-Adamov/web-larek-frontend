@@ -26,23 +26,22 @@ export class Basket extends Component<IBasket> {
 
     if (this.button) {
       this.button.addEventListener('click', () => {
-          events.emit('order:open');
+        events.emit('order:open');
       });
     }
   }
 
   set cards(cards: HTMLElement[]) {
     if (cards.length) {
-        this.list.replaceChildren(...cards);
+      this.list.replaceChildren(...cards);
     } else {
-        this.list.replaceChildren(createElement<HTMLParagraphElement>('p', {
-            textContent: 'Корзина пуста'
-        }));
+      this.list.replaceChildren(createElement<HTMLParagraphElement>('p', {
+        textContent: 'Корзина пуста'
+      }));
     }
 }
 
   set total(total: number) {
     this.setText(this._total, `${total} синапсов`)
   }
-
 }

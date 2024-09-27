@@ -8,7 +8,7 @@ import { CardsData } from './components/CardsData';
 import { Modal } from './components/common/Modal';
 import { OrderData } from './components/OrderData';
 import './scss/styles.scss';
-import { ICard } from './types';
+import { ICard, TContactsForm, TOrderForm } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
 import { Page } from './components/Page';
@@ -16,6 +16,7 @@ import { Contacts } from './components/Contacts';
 import { Success } from './components/common/Success';
 import { Order } from './components/Order';
 import { CardsContainer } from './components/CardsContainer';
+import { Form } from './components/common/Form';
 
 
 const events = new EventEmitter()
@@ -55,18 +56,17 @@ const orderData = new OrderData(events)
 api.getCardList()
   .then((cards) => {
     cardsData.cards = cards
-    // console.log(cards)
   })
   .catch(err => {
     console.error(err)
   })
 
-
-
 // Выводим карточки на главную страницу
 events.on('cards:changed', () => {
   const cardsArray = cardsData.cards.map(card => {
-    const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events)
+    const cardInstant = new Card('card', cloneTemplate(cardCatalogTemplate), {
+      onClick: () => events.emit('card:select', card)
+    })
     return cardInstant.render(card)
   })
   cardsContainer.render({catalog: cardsArray})
@@ -75,37 +75,88 @@ events.on('cards:changed', () => {
 events.on('card:select', (card: ICard) => {
   cardsData.setPreview(card)
 
-  // console.log(card)
 })
 
 events.on('preview:changed', (card: ICard) => {
-  // const cardContent = cardsData.getCard(card.id)
-
-  const cardInModal = new Card(cloneTemplate(cardPrewiewTemplate), events)
-
+  const cardInModal = new Card('card', cloneTemplate(cardPrewiewTemplate), {
+    onClick: () => events.emit('add:card', card)
+  })
   modal.render({content:cardInModal.render(card)})
-
-  // modal.render({content:cardInModal.render({
-  //   category: card.category,
-  //   title: card.title,
-  //   image: card.image,
-  //   description: card.description,
-  //   price: card.price
-  // })})
 })
 
-// events.on('preview:changed', (card: ICard) => {
-//   const cardContent = cardsData.getCard(card.id)
-//   const cardInModal = new Card(cloneTemplate(cardPrewiewTemplate), events)
+events.on('add:card', (card: ICard) => {
+  basketData.addCard(card)
+})
 
-//   modal.render({content:cardInModal.render(cardContent)})
-//   // console.log(cardInModal)
-// })
+events.on('basket:changed', () => {
+  basket.cards = basketData.cards.map((item, index) => {
+    const card = new Card('card', cloneTemplate(cardBasketTemplate), {
+      onClick: () => events.emit('delete:card', item)
+    })
+    card.index = index + 1
+    return card.render(item)
+  })
+  modal.content = basket.render()
+  // basket.total = basketData.total
+})
 
-// events.on('basket:open', () => {
-//   modal.open()
-// })
+events.on('basket:open', () => {
+  modal.render({
+    content:basket.render()
+  })
+})
+
+events.on('delete:card', (card: ICard) => {
+  basketData.deleteCard(card.id)
+})
+
+events.on('order:open', () => {
+  modal.render({
+    content:order.render({
+      paymentMethod: '',
+      address: '',
+      valid: false,
+      errors: []
+    })})
+})
+
+events.on('formErrors:change', (errors: Partial<TOrderForm>) => {
+  const { paymentMethod, address } = errors
+  order.valid = !paymentMethod && !address
+  order.errors = Object.values({paymentMethod, address}).filter(i => !!i).join('; ')
+})
 
 
+events.on(/^order\..*:change/, (data: {field: keyof TOrderForm, value: string }) => {
+  orderData.setOrderField(data.field, data.value)
+  orderData.checkValidateAddress()
+});
 
 
+events.on('order:submit', () => {
+  modal.render({
+    content:contacts.render({
+      email: '',
+      phone: '',
+      valid: false,
+      errors: []
+    })})
+})
+
+events.on('formErrors:change', (errors: Partial<TContactsForm>) => {
+  const { email, phone } = errors
+  contacts.valid = !email && !phone
+  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ')
+})
+
+events.on(/^contacts\..*:change/, (data: {field: keyof TContactsForm, value: string }) => {
+  orderData.setContactsField(data.field, data.value);
+  orderData.checkValidateContacts()
+});
+
+
+events.on('contacts:submit', () => {
+  modal.render({
+    content: success.render()
+  })
+})

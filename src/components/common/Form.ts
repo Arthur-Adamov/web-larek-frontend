@@ -10,9 +10,12 @@ interface IFormState {
 export class Form<T> extends Component<IFormState> {
   protected _submit: HTMLButtonElement;
   protected _errors: HTMLElement;
+  // protected container: HTMLFormElement
+
 
   constructor(protected container: HTMLFormElement, protected events: IEvents) {
     super(container);
+    // this.events = events
 
     this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
     this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
@@ -50,5 +53,8 @@ export class Form<T> extends Component<IFormState> {
     super.render({valid, errors});
     Object.assign(this, inputs);
     return this.container;
+  }
+  clear() {
+    this.container.reset()
   }
 }

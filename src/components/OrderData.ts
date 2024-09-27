@@ -18,6 +18,22 @@ export class OrderData implements IOrderData {
     this.address = orderData.address
   }
 
+  setOrderField(field: keyof TOrderForm, value: string) {
+    this[field] = value;
+
+    // if (this.checkValidateAddress()) {
+    //     this.events.emit('order:ready')
+    // }
+  }
+
+  setContactsField(field: keyof TContactsForm, value: string) {
+    this[field] = value;
+
+    // if (this.checkValidateAddress()) {
+    //     this.events.emit('contacts:ready')
+    // }
+  }
+
   setContactsInfo(contactsData: TContactsForm){
     this.email = contactsData.email
     this.phone = contactsData.phone
@@ -38,6 +54,7 @@ export class OrderData implements IOrderData {
       errors.address = 'Необходимо указать адрес'
     }
     this.formErrors = errors
+    this.events.emit('formErrors:change', this.formErrors)
     return Object.keys(errors).length === 0
   }
 
