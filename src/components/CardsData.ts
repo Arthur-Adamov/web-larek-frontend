@@ -19,23 +19,9 @@ export class CardsData implements ICardsData {
     return this._cards
   }
 
-
   getCard(cardId: string): ICard {
     return this._cards.find((card) => card.id === cardId)
   }
-
-  // setPreview(cardId: string | null) {
-  //   if (!cardId) {
-  //     this.preview = null;
-  //     return;
-  //   }
-  //   const selectedCard = this.getCard(cardId);
-  //   if (selectedCard) {
-  //     this.preview = cardId;
-  //     this.events.emit('card:selected')
-  //   }
-  // }
-
 
   setPreview(card: ICard) {
     this.preview = card

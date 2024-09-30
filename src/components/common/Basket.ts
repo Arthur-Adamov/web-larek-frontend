@@ -44,4 +44,8 @@ export class Basket extends Component<IBasket> {
   set total(total: number) {
     this.setText(this._total, `${total} синапсов`)
   }
+
+  toggleActiveButton(state: boolean) {
+    this.setDisabled(this.button, state)
+  }
 }

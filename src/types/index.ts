@@ -11,21 +11,20 @@ export interface ICard {
 }
 
 export interface IOrder {
-  cardItems: ICard[];
-  totalPrice: number;
-  paymentMethod: string;
+  items: string[];
+  total: number;
+  payment: string;
   address: string;
   email: string;
   phone: string;
 }
 
-
 export type TCardInfo = Pick<ICard, 'image' | 'category' | 'title' | 'description' | 'price'>
 export type TCardPublicInfo = Pick<ICard, 'category' | 'title' | 'image' | 'price'>
 
-export type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'totalPrice'>
+export type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'total'>
 
-export type TOrderForm = Pick<IOrder, 'paymentMethod' | 'address'>
+export type TOrderForm = Pick<IOrder, 'payment' | 'address'>
 export type TContactsForm = Pick<IOrder, 'email' | 'phone'>
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>
@@ -33,8 +32,6 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>
 export interface ICardsData {
   cards: ICard[];
   preview: ICard;
-  // setCards(cards: ICard[]): void
-  // getCards(): ICard[]
   getCard(cardId: string): ICard;
   setPreview(card: ICard): void
   getPreview(): void
@@ -47,19 +44,17 @@ export interface IBasketData {
   isCardInBasket(cardId: string): boolean
   clearBasket(): void
   getCards(): ICard[]
-  // setTotal(value: number)
-  // getCardsId(): string[]
+  getCardsId(): string[]
 }
 
 export interface IOrderData {
-  paymentMethod: string;
+  payment: string;
   address: string;
   email: string;
   phone: string;
   setOrderInfo(orderData: TOrderForm): void;
   setContactsInfo(contactsData: TContactsForm): void
   getOrderData(): void
-
   checkValidateAddress(): boolean
   checkValidateContacts(): boolean
 }

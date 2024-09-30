@@ -6,16 +6,9 @@ export class BasketData implements IBasketData {
   total: number
   protected events: IEvents
 
-
-
   constructor(events: IEvents) {
     this.events = events
   }
-
-  // addCard(card: ICard) {
-  //   this.cards.push(card)
-  //   this.events.emit('basket:changed')
-  // }
 
   addCard(card: ICard) {
     const isCardInBasket = this.cards.some((item) => {
@@ -24,6 +17,7 @@ export class BasketData implements IBasketData {
     if(!isCardInBasket) {
       this.cards.push(card)
       this.events.emit('basket:changed')
+      this.events.emit('counter:changed')
     }
   }
 
@@ -45,17 +39,17 @@ export class BasketData implements IBasketData {
     return this.cards
   }
 
-  // setTotal(value: number) {
-  //   // this.setText(this._total, )
-  // }
-  // getTotal(): number {
-  //   this.total = this.cards.reduce((a, c) => {
-  //     const item = this.cards.find((it) => it.id === c)
-  //     if (!item || item.price === null) {
-  //       return a
-  //     }
-  //     return a + Number(item.price)
-  //   }, 0)
-  //   return this.total
-  // }
+  getCardsId(): string[] {
+    return this.cards.map(card => card.id)
+  }
+
+  getTotal(): number {
+    this.total = this.cards.reduce((acc, card) => {
+      if (!card || card.price === null) {
+        return acc
+      }
+      return acc + Number(card.price)
+    }, 0)
+    return this.total
+  }
 }

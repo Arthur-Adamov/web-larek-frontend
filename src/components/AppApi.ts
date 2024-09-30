@@ -1,7 +1,6 @@
 import { ICard, IOrder } from "../types";
 import { Api, ApiListResponse } from "./base/api";
 
-
 export class WebLarekAPI extends Api {
   readonly cdn: string;
 

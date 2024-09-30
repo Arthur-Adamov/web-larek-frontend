@@ -2,7 +2,6 @@ import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Components";
 import { IEvents } from "./base/events";
 
-
 interface IPage {
   counter: number
   catalog: HTMLElement[]
@@ -14,7 +13,6 @@ export class Page extends Component<IPage> {
   protected _catalog: HTMLElement;
   protected _wrapper: HTMLElement;
   protected _basket: HTMLElement;
-
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);

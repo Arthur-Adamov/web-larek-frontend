@@ -1,8 +1,8 @@
-import { FormErrors, IOrder, IOrderData, TContactsForm, TOrderForm } from "../types"
+import { FormErrors, IOrderData, TContactsForm, TOrderForm } from "../types"
 import { IEvents } from "./base/events"
 
 export class OrderData implements IOrderData {
-  paymentMethod: string
+  payment: string
   address: string
   email: string
   phone: string
@@ -14,24 +14,16 @@ export class OrderData implements IOrderData {
   }
 
   setOrderInfo(orderData: TOrderForm){
-    this.paymentMethod = orderData.paymentMethod
+    this.payment = orderData.payment
     this.address = orderData.address
   }
 
   setOrderField(field: keyof TOrderForm, value: string) {
     this[field] = value;
-
-    // if (this.checkValidateAddress()) {
-    //     this.events.emit('order:ready')
-    // }
   }
 
   setContactsField(field: keyof TContactsForm, value: string) {
     this[field] = value;
-
-    // if (this.checkValidateAddress()) {
-    //     this.events.emit('contacts:ready')
-    // }
   }
 
   setContactsInfo(contactsData: TContactsForm){
@@ -41,7 +33,7 @@ export class OrderData implements IOrderData {
 
   getOrderData() {
     return {
-      paymentMethod: this.paymentMethod,
+      payment: this.payment,
       address: this.address,
       email: this.email,
       phone: this.phone

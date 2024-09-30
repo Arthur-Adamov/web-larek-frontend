@@ -1,7 +1,6 @@
 import { TContactsForm } from "../types"
 import { ensureElement } from "../utils/utils"
 import { IEvents } from "./base/events"
-import { CardsContainer } from "./CardsContainer"
 import { Form } from "./common/Form"
 
 export class Contacts extends Form<TContactsForm> {
@@ -17,7 +16,6 @@ export class Contacts extends Form<TContactsForm> {
 
   set email(value: string) {
     (this.container.elements.namedItem('email') as HTMLInputElement).value = value
-
   }
 
   set phone(value: string) {

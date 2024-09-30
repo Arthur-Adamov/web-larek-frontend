@@ -1,5 +1,4 @@
 import { ICard } from "../types"
-import { cloneTemplate, ensureElement } from "../utils/utils"
 import { Component } from "./base/Components"
 import { IEvents } from "./base/events"
 
@@ -21,8 +20,6 @@ export class Card extends Component<ICard> {
 
   constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
     super(container)
-    // this.events = events
-
 
     this.cardImage = container.querySelector('.card__image')
     this.cardCategory = container.querySelector('.card__category')
@@ -31,10 +28,6 @@ export class Card extends Component<ICard> {
     this.cardButton = container.querySelector('.card__button')
     this.cardPrice = container.querySelector('.card__price')
     this.cardIndex = container.querySelector('.basket__item-index')
-
-    // this.container.addEventListener('click', () => {
-    //   this.events.emit('card:select', {card: this})
-    // })
 
     if (actions?.onClick) {
       if (this.cardButton) {
@@ -45,10 +38,13 @@ export class Card extends Component<ICard> {
     }
   }
 
+  toggleActiveButton(state: boolean) {
+    this.setDisabled(this.cardButton, state)
+  }
+
   set index(value: number) {
     this.setText(this.cardIndex, value)
   }
-
 
   set id(value: string) {
     this.container.dataset.id = value;
