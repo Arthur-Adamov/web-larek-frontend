@@ -7,7 +7,7 @@ interface IBasket {
   list: HTMLElement
   cards: HTMLElement[]
   total: number
-  button: HTMLElement
+  button: HTMLButtonElement
 }
 
 export class Basket extends Component<IBasket> {
@@ -15,7 +15,7 @@ export class Basket extends Component<IBasket> {
   protected list: HTMLElement
   protected _cards: HTMLElement[]
   protected _total: HTMLElement
-  protected button: HTMLElement
+  protected button: HTMLButtonElement
 
   constructor(container: HTMLElement, events: IEvents) {
     super(container)
