@@ -1,9 +1,10 @@
 import { IBasketData, ICard, } from "../types"
 import { IEvents } from "./base/events"
+import { Card } from "./Card"
 
 export class BasketData implements IBasketData {
   cards: ICard[] = []
-  total: number
+  count: number = 0
   protected events: IEvents
 
   constructor(events: IEvents) {
@@ -11,19 +12,22 @@ export class BasketData implements IBasketData {
   }
 
   addCard(card: ICard) {
-    const isCardInBasket = this.cards.some((item) => {
-      item.id === card.id
-    })
+    const isCardInBasket = this.cards.some((item) => item.id === card.id)
     if(!isCardInBasket) {
       this.cards.push(card)
       this.events.emit('basket:changed')
-      this.events.emit('counter:changed')
     }
+  }
+
+  updateCount() {
+    this.count = this.cards.length
+    this.events.emit('basket:changed')
   }
 
   deleteCard(cardId: string) {
     this.cards = this.cards.filter((card) => card.id !== cardId)
     this.events.emit('basket:changed')
+    this.updateCount()
   }
 
   isCardInBasket(cardId: string): boolean {
@@ -32,6 +36,7 @@ export class BasketData implements IBasketData {
 
   clearBasket(): void {
     this.cards = []
+    this.count = 0
     this.events.emit('basket:changed')
   }
 
@@ -44,12 +49,8 @@ export class BasketData implements IBasketData {
   }
 
   getTotal(): number {
-    this.total = this.cards.reduce((acc, card) => {
-      if (!card || card.price === null) {
-        return acc
-      }
-      return acc + Number(card.price)
-    }, 0)
-    return this.total
+    return this.cards.reduce((acc, card) =>
+      acc + card.price, 0
+    )
   }
 }

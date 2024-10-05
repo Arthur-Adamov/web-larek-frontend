@@ -1,4 +1,4 @@
-import { FormErrors, IOrderData, TContactsForm, TOrderForm } from "../types"
+import { TFormErrors, IOrderData, TContactsForm, TOrderForm } from "../types"
 import { IEvents } from "./base/events"
 
 export class OrderData implements IOrderData {
@@ -7,7 +7,7 @@ export class OrderData implements IOrderData {
   email: string
   phone: string
   protected events: IEvents
-  formErrors: FormErrors = {}
+  formErrors: TFormErrors = {}
 
   constructor(events: IEvents) {
     this.events = events
@@ -42,6 +42,9 @@ export class OrderData implements IOrderData {
 
   checkValidateAddress() {
     const errors: typeof this.formErrors = {}
+    if(!this.payment) {
+      errors.payment = 'Не выбран способ оплаты'
+    }
     if (!this.address) {
       errors.address = 'Необходимо указать адрес'
     }
@@ -61,5 +64,13 @@ export class OrderData implements IOrderData {
     this.formErrors = errors
     this.events.emit('formErrors:change', this.formErrors)
     return Object.keys(errors).length === 0
+  }
+
+  resetFormData() {
+    this.payment = ''
+    this.address = ''
+    this.email = ''
+    this.phone = ''
+    this.formErrors = {}
   }
 }

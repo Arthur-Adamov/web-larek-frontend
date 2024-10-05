@@ -42,6 +42,10 @@ export class Card extends Component<ICard> {
     this.setDisabled(this.cardButton, state)
   }
 
+  setDisabledButton() {
+    this.cardButton.setAttribute('disabled', 'disabled')
+  }
+
   set index(value: number) {
     this.setText(this.cardIndex, value)
   }
@@ -62,6 +66,26 @@ export class Card extends Component<ICard> {
     this.setText(this.cardCategory, value)
   }
 
+  setColorCategory() {
+    switch (true) {
+			case this.cardCategory.textContent === 'софт-скил':
+        this.toggleClass(this.cardCategory, 'card__category_soft', true)
+				break
+			case this.cardCategory.textContent === 'другое':
+        this.toggleClass(this.cardCategory, 'card__category_other', true)
+				break
+			case this.cardCategory.textContent === 'хард-скил':
+        this.toggleClass(this.cardCategory, 'card__category_hard', true)
+				break
+			case this.cardCategory.textContent === 'дополнительное':
+        this.toggleClass(this.cardCategory, 'card__category_additional', true)
+				break
+			case this.cardCategory.textContent === 'кнопка':
+        this.toggleClass(this.cardCategory, 'card__category_button', true)
+				break
+		}
+  }
+
   set title(value: string) {
     this.setText(this.cardTitle, value);
   }
@@ -74,7 +98,12 @@ export class Card extends Component<ICard> {
     this.setText(this.cardButton, value)
   }
 
-  set price(value: string) {
-    this.setText(this.cardPrice, value)
-  }
+  set price(value: number) {
+		if (value === null || value === 0) {
+			this.setText(this.cardPrice, 'Бесценно')
+      this.setDisabled(this.cardButton, true)
+		} else {
+			this.setText(this.cardPrice, `${value} синапсов`)
+		}
+	}
 }

@@ -8,14 +8,13 @@ import { CardsData } from './components/CardsData';
 import { Modal } from './components/common/Modal';
 import { OrderData } from './components/OrderData';
 import './scss/styles.scss';
-import { ICard, TContactsForm, TOrderForm } from './types';
+import { ICard, TContactsForm, TFormErrors, TOrderForm } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
 import { Page } from './components/Page';
 import { Contacts } from './components/Contacts';
 import { Success } from './components/common/Success';
 import { Order } from './components/Order';
-import { CardsContainer } from './components/CardsContainer';
 import { Form } from './components/common/Form';
 
 const events = new EventEmitter()
@@ -35,7 +34,6 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket')
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order')
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts')
 
-const cardsContainer = new CardsContainer(document.querySelector('.gallery'))
 const modalContainer = ensureElement<HTMLElement>('#modal-container')
 
 const modal =  new Modal(modalContainer, events)
@@ -60,13 +58,25 @@ api.getCardList()
 
 // Выводим карточки на главную страницу
 events.on('cards:changed', () => {
-  const cardsArray = cardsData.cards.map(card => {
+  page.catalog = cardsData.cards.map((card) => {
     const cardInstant = new Card('card', cloneTemplate(cardCatalogTemplate), {
       onClick: () => events.emit('card:select', card)
     })
-    return cardInstant.render(card)
+    cardInstant.title = card.title
+    cardInstant.category = card.category
+    cardInstant.image = card.image
+    cardInstant.price = card.price
+    cardInstant.setColorCategory()
+    return cardInstant.render()
   })
-  cardsContainer.render({catalog: cardsArray})
+})
+
+events.on('modal:open', () => {
+  page.locked = true
+})
+
+events.on('modal:close', () => {
+  page.locked = false
 })
 
 events.on('card:select', (card: ICard) => {
@@ -76,21 +86,30 @@ events.on('card:select', (card: ICard) => {
 events.on('preview:changed', (card: ICard) => {
   const cardInModal = new Card('card', cloneTemplate(cardPrewiewTemplate), {
     onClick: () => events.emit('add:card', card)
+
   })
-  modal.render({content:cardInModal.render(card)})
-  basketData.cards.some((value) => { return value === card }) ?
-    cardInModal.toggleActiveButton(true) :
-    cardInModal.toggleActiveButton(false)
+  modal.render({
+    content:cardInModal.render({
+      title: card.title,
+      category: card.category,
+      image: card.image,
+      price: card.price,
+      description: card.description,
+      id: card.id
+    }
+  )})
+
+  if(basketData.isCardInBasket(card.id)) {
+    cardInModal.setDisabledButton()
+  }
+
+  cardInModal.setColorCategory()
   }
 )
 
 events.on('add:card', (card: ICard) => {
   basketData.addCard(card)
   modal.close()
-})
-
-events.on('counter:changed', () => {
-  page.counter = basketData.cards.length
 })
 
 events.on('basket:changed', () => {
@@ -101,11 +120,11 @@ events.on('basket:changed', () => {
     card.index = index + 1
     return card.render(item)
   })
+  page.counter = basketData.cards.length
   basket.total = basketData.getTotal()
 })
 
 events.on('basket:open', () => {
-  basketData.total === 0 ? basket.toggleActiveButton(true) : basket.toggleActiveButton(false)
   modal.render({
     content:basket.render()
   })
@@ -126,10 +145,14 @@ events.on('order:open', () => {
   )
 })
 
-events.on('formErrors:change', (errors: Partial<TOrderForm>) => {
-  const { payment, address } = errors
+events.on('formErrors:change', (errors: Partial<TFormErrors>) => {
+  const { payment, address, email, phone } = errors
+
   order.valid = !payment && !address
   order.errors = Object.values({payment, address}).filter(i => !!i).join('; ')
+
+  contacts.valid = !email && !phone
+  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ')
 })
 
 events.on(/^order\..*:change/, (data: {field: keyof TOrderForm, value: string }) => {
@@ -148,12 +171,6 @@ events.on('order:submit', () => {
   )
 })
 
-events.on('formErrors:change', (errors: Partial<TContactsForm>) => {
-  const { email, phone } = errors
-  contacts.valid = !email && !phone
-  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ')
-})
-
 events.on(/^contacts\..*:change/, (data: {field: keyof TContactsForm, value: string }) => {
   orderData.setContactsField(data.field, data.value);
   orderData.checkValidateContacts()
@@ -169,9 +186,9 @@ events.on('contacts:submit', () => {
     modal.render({
       content: success.render()
     })
-    success.total = basketData.total
+    success.total = basketData.getTotal()
     basketData.clearBasket()
-    events.emit('counter:changed')
+    orderData.resetFormData()
   })
   .catch(err => {
     console.log(err)

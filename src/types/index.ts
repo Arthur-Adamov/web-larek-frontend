@@ -1,5 +1,3 @@
-// import { ApiPostMethods } from "../components/base/api";
-
 export interface ICard {
   id: string;
   category?: string;
@@ -27,7 +25,7 @@ export type TBasket = Pick<ICard & IOrder, 'title' | 'price' | 'total'>
 export type TOrderForm = Pick<IOrder, 'payment' | 'address'>
 export type TContactsForm = Pick<IOrder, 'email' | 'phone'>
 
-export type FormErrors = Partial<Record<keyof IOrder, string>>
+export type TFormErrors = Partial<Record<keyof IOrder, string>>
 
 export interface ICardsData {
   cards: ICard[];

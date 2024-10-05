@@ -5,7 +5,6 @@ import { IEvents } from "../base/events"
 
 interface IBasket {
   list: HTMLElement
-  cards: HTMLElement[]
   total: number
   button: HTMLButtonElement
 }
@@ -13,7 +12,6 @@ interface IBasket {
 export class Basket extends Component<IBasket> {
   protected events: IEvents
   protected list: HTMLElement
-  protected _cards: HTMLElement[]
   protected _total: HTMLElement
   protected button: HTMLButtonElement
 
@@ -24,11 +22,18 @@ export class Basket extends Component<IBasket> {
     this._total = this.container.querySelector('.basket__price')
     this.button = this.container.querySelector('.basket__button')
 
+    const initialTotal = this.getInitialTotal()
+    this.updateButtonState(initialTotal)
+
     if (this.button) {
       this.button.addEventListener('click', () => {
         events.emit('order:open');
       });
     }
+  }
+
+  getInitialTotal(): number {
+    return 0
   }
 
   set cards(cards: HTMLElement[]) {
@@ -39,13 +44,22 @@ export class Basket extends Component<IBasket> {
         textContent: 'Корзина пуста'
       }));
     }
-}
+  }
+
+  protected toggleActiveButton(state: boolean) {
+    this.setDisabled(this.button, state)
+  }
+
+  updateButtonState(total: number) {
+    if(total === 0) {
+      this.toggleActiveButton(true)
+    } else {
+      this.toggleActiveButton(false)
+    }
+  }
 
   set total(total: number) {
     this.setText(this._total, `${total} синапсов`)
-  }
-
-  toggleActiveButton(state: boolean) {
-    this.setDisabled(this.button, state)
+    this.updateButtonState(total)
   }
 }
