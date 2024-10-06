@@ -1,5 +1,5 @@
 import { TOrderForm } from "../types";
-import { ensureElement } from "../utils/utils";
+import { ensureAllElements, ensureElement } from "../utils/utils";
 import { IEvents } from "./base/events";
 import { Form } from "./common/Form";
 
@@ -18,12 +18,12 @@ export class Order extends Form<TOrderForm> {
     this._offline = ensureElement<HTMLButtonElement>('.button_alt[name="cash"]', container)
 
     this._online.addEventListener('click', () => {
-			this.payment = 'card';
-			this.onInputChange('payment', 'card');
+			this.onInputChange('payment', 'card')
+      this.events.emit('cardPayment:select')
 		});
 		this._offline.addEventListener('click', () => {
-			this.payment = 'cash';
-			this.onInputChange('payment', 'cash');
+			this.onInputChange('payment', 'cash')
+      this.events.emit('cashPayment:select')
 		});
   }
 

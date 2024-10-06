@@ -141,13 +141,13 @@ events.on('order:open', () => {
   )
 })
 
-// events.on('order.payment:change', () => {
-//   if(orderData.button) {
-//     order.payment = 'card'
-//   } else {
-//     order.payment = 'cash'
-//   }
-// })
+events.on('cardPayment:select', () => {
+  order.payment = 'card'
+})
+
+events.on('cashPayment:select', () => {
+  order.payment = 'cash'
+})
 
 events.on('formErrors:change', (errors: Partial<TFormErrors>) => {
   const { payment, address } = errors

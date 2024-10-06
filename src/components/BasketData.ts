@@ -4,7 +4,6 @@ import { Card } from "./Card"
 
 export class BasketData implements IBasketData {
   cards: ICard[] = []
-  // count: number = 0
   protected events: IEvents
 
   constructor(events: IEvents) {
@@ -19,11 +18,6 @@ export class BasketData implements IBasketData {
     }
   }
 
-  // updateCount() {
-  //   this.count = this.cards.length
-  //   this.events.emit('basket:changed')
-  // }
-
   getCount() {
     return this.cards.length
   }
@@ -31,7 +25,6 @@ export class BasketData implements IBasketData {
   deleteCard(cardId: string) {
     this.cards = this.cards.filter((card) => card.id !== cardId)
     this.events.emit('basket:changed')
-    // this.updateCount()
   }
 
   isCardInBasket(cardId: string): boolean {
@@ -40,7 +33,6 @@ export class BasketData implements IBasketData {
 
   clearBasket(): void {
     this.cards = []
-    // this.count = 0
     this.events.emit('basket:changed')
   }
 
