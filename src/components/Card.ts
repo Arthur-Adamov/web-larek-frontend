@@ -62,27 +62,19 @@ export class Card extends Component<ICard> {
     this.setImage(this.cardImage, value, this.title)
   }
 
+  categoryСolors: Map<string, string> = new Map([
+    ['софт-скил', 'card__category_soft'],
+		['хард-скил', 'card__category_hard'],
+		['дополнительное', 'card__category_additional'],
+		['другое', 'card__category_other'],
+		['кнопка', 'card__category_button']
+  ])
+
   set category(value: string) {
     this.setText(this.cardCategory, value)
-  }
 
-  setColorCategory() {
-    switch (true) {
-			case this.cardCategory.textContent === 'софт-скил':
-        this.toggleClass(this.cardCategory, 'card__category_soft', true)
-				break
-			case this.cardCategory.textContent === 'другое':
-        this.toggleClass(this.cardCategory, 'card__category_other', true)
-				break
-			case this.cardCategory.textContent === 'хард-скил':
-        this.toggleClass(this.cardCategory, 'card__category_hard', true)
-				break
-			case this.cardCategory.textContent === 'дополнительное':
-        this.toggleClass(this.cardCategory, 'card__category_additional', true)
-				break
-			case this.cardCategory.textContent === 'кнопка':
-        this.toggleClass(this.cardCategory, 'card__category_button', true)
-				break
+    if (this.cardCategory) {
+			this.toggleClass(this.cardCategory, this.categoryСolors.get(value), true)
 		}
   }
 

@@ -66,7 +66,6 @@ events.on('cards:changed', () => {
     cardInstant.category = card.category
     cardInstant.image = card.image
     cardInstant.price = card.price
-    cardInstant.setColorCategory()
     return cardInstant.render()
   })
 })
@@ -102,10 +101,7 @@ events.on('preview:changed', (card: ICard) => {
   if(basketData.isCardInBasket(card.id)) {
     cardInModal.setDisabledButton()
   }
-
-  cardInModal.setColorCategory()
-  }
-)
+})
 
 events.on('add:card', (card: ICard) => {
   basketData.addCard(card)
@@ -120,7 +116,7 @@ events.on('basket:changed', () => {
     card.index = index + 1
     return card.render(item)
   })
-  page.counter = basketData.cards.length
+  page.counter = basketData.getCount()
   basket.total = basketData.getTotal()
 })
 
@@ -145,14 +141,19 @@ events.on('order:open', () => {
   )
 })
 
+// events.on('order.payment:change', () => {
+//   if(orderData.button) {
+//     order.payment = 'card'
+//   } else {
+//     order.payment = 'cash'
+//   }
+// })
+
 events.on('formErrors:change', (errors: Partial<TFormErrors>) => {
-  const { payment, address, email, phone } = errors
+  const { payment, address } = errors
 
   order.valid = !payment && !address
   order.errors = Object.values({payment, address}).filter(i => !!i).join('; ')
-
-  contacts.valid = !email && !phone
-  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ')
 })
 
 events.on(/^order\..*:change/, (data: {field: keyof TOrderForm, value: string }) => {
@@ -169,6 +170,13 @@ events.on('order:submit', () => {
       errors: []
     })}
   )
+})
+
+events.on('contactsErrors:change', (errors: Partial<TFormErrors>) => {
+  const { email, phone } = errors
+
+  contacts.valid = !email && !phone
+  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ')
 })
 
 events.on(/^contacts\..*:change/, (data: {field: keyof TContactsForm, value: string }) => {

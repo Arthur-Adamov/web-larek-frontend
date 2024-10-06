@@ -8,6 +8,7 @@ export class OrderData implements IOrderData {
   phone: string
   protected events: IEvents
   formErrors: TFormErrors = {}
+  button: boolean = false
 
   constructor(events: IEvents) {
     this.events = events
@@ -62,7 +63,7 @@ export class OrderData implements IOrderData {
       errors.phone = 'Необходимо указать телефон'
     }
     this.formErrors = errors
-    this.events.emit('formErrors:change', this.formErrors)
+    this.events.emit('contactsErrors:change', this.formErrors)
     return Object.keys(errors).length === 0
   }
 
