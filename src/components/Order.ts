@@ -19,11 +19,9 @@ export class Order extends Form<TOrderForm> {
 
     this._online.addEventListener('click', () => {
 			this.onInputChange('payment', 'card')
-      this.events.emit('cardPayment:select')
 		});
 		this._offline.addEventListener('click', () => {
 			this.onInputChange('payment', 'cash')
-      this.events.emit('cashPayment:select')
 		});
   }
 

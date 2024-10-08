@@ -141,12 +141,12 @@ events.on('order:open', () => {
   )
 })
 
-events.on('cardPayment:select', () => {
-  order.payment = 'card'
+events.on('order.payment:change', (data: {field: string, value: string}) => {
+  orderData.setPayment(data.value)
 })
 
-events.on('cashPayment:select', () => {
-  order.payment = 'cash'
+events.on('payment:changed', () => {
+  order.payment = orderData.getPayment()
 })
 
 events.on('formErrors:change', (errors: Partial<TFormErrors>) => {

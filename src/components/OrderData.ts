@@ -14,7 +14,16 @@ export class OrderData implements IOrderData {
     this.events = events
   }
 
-  setOrderInfo(orderData: TOrderForm){
+  setPayment(value: string) {
+    this.payment = value
+    this.events.emit('payment:changed')
+  }
+
+  getPayment() {
+    return this.payment
+  }
+
+  setOrderInfo(orderData: TOrderForm) {
     this.payment = orderData.payment
     this.address = orderData.address
   }
